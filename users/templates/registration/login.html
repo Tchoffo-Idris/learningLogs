@@ -2,19 +2,109 @@
 {% load bootstrap4 %}
 
 {% block page_header %}
-  <h2>Log in to your account. </h2>
+<style>
+  .auth-header {
+    padding: 1.5rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .auth-icon {
+    width: 56px; height: 56px;
+    background: var(--ink);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 4px 0 var(--purple);
+  }
+  .auth-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0;
+  }
+  .auth-subtitle {
+    font-size: 0.9rem;
+    color: rgba(13,13,13,0.5);
+    margin: 0;
+    font-weight: 400;
+  }
+</style>
+<div class="auth-header fade-in">
+  <div class="auth-icon">🔑</div>
+  <div>
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Log in to your Learning Log</p>
+  </div>
+</div>
 {% endblock page_header %}
 
 {% block content %}
-  
-  <form method="post" action="{% url 'users:login' %}" class="form">
+<style>
+  .auth-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 7px 8px 0 var(--ink);
+    max-width: 480px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+  .auth-card .form-group { margin-bottom: 1.4rem; }
+  .form-helper {
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.9rem;
+    color: rgba(13,13,13,0.6);
+    text-align: center;
+  }
+  .form-helper a {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--purple);
+  }
+  .form-helper a:hover { color: var(--coral); }
+  .login-btn {
+    width: 100%;
+    font-family: var(--font-display) !important;
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    background: var(--ink) !important;
+    color: var(--lime) !important;
+    border: 2px solid var(--ink) !important;
+    padding: 0.85rem !important;
+    border-radius: 50px !important;
+    transition: all 0.2s !important;
+    margin-top: 0.5rem;
+    letter-spacing: 0.02em !important;
+  }
+  .login-btn:hover {
+    background: var(--purple) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 5px 6px 0 var(--ink) !important;
+  }
+  @media (max-width: 540px) {
+    .auth-card { padding: 1.5rem; }
+  }
+</style>
+
+<div class="auth-card">
+  <form method="post" action="{% url 'users:login' %}">
     {% csrf_token %}
     {% bootstrap_form form %}
-    {% buttons %}
-      <button name="submit" class="btn btn-primary"> Log in</button>
-    {% endbuttons %}
-    <input type="hidden" name="next"
-      value="{% url 'learning_logs:index' %}" />
+    <button type="submit" name="submit" class="login-btn">Log in →</button>
+    <input type="hidden" name="next" value="{% url 'learning_logs:index' %}" />
   </form>
+  <div class="form-helper">
+    Don't have an account?
+    <a href="{% url 'users:register' %}">Register here</a>
+  </div>
+</div>
 
 {% endblock content %}

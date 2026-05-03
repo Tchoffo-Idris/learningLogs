@@ -1,5 +1,108 @@
 {% extends "learning_logs/base.html" %}
 
 {% block content %}
-  <p>You have been logged out. Thank you for visiting!</p>
+<style>
+  .goodbye-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    box-shadow: 7px 8px 0 var(--ink);
+    max-width: 480px;
+    text-align: center;
+    animation: bounceIn 0.6s ease both;
+  }
+  @keyframes bounceIn {
+    0%   { transform: scale(0.8); opacity: 0; }
+    70%  { transform: scale(1.04); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .goodbye-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: wave 1.5s ease-in-out 0.5s both;
+    transform-origin: 70% 70%;
+  }
+  @keyframes wave {
+    0%   { transform: rotate(0); }
+    15%  { transform: rotate(18deg); }
+    30%  { transform: rotate(-12deg); }
+    45%  { transform: rotate(18deg); }
+    60%  { transform: rotate(-6deg); }
+    75%  { transform: rotate(10deg); }
+    100% { transform: rotate(0); }
+  }
+  .goodbye-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .goodbye-msg {
+    font-size: 1rem;
+    color: rgba(13,13,13,0.6);
+    margin-bottom: 2rem;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .goodbye-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-back {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--lime);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+  .btn-back:hover {
+    background: var(--ink);
+    color: var(--lime);
+    transform: translateY(-2px);
+    box-shadow: 5px 6px 0 var(--purple);
+    text-decoration: none;
+  }
+  .btn-register {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-register:hover {
+    background: var(--sky);
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="goodbye-card">
+  <span class="goodbye-icon">👋</span>
+  <h2 class="goodbye-title">See you soon!</h2>
+  <p class="goodbye-msg">
+    You've been logged out successfully.<br>Thanks for using Learning Log!
+  </p>
+  <div class="goodbye-actions">
+    <a href="{% url 'users:login' %}" class="btn-back">Log back in</a>
+    <a href="{% url 'learning_logs:index' %}" class="btn-register">Go home</a>
+  </div>
+</div>
+
 {% endblock content %}

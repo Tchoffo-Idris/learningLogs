@@ -1,16 +1,197 @@
 {% extends "learning_logs/base.html" %}
 
 {% block page_header %}
-  <div class="jumbotron">
-    <h1 class="display-3">Track your learning.</h1>
+<style>
+  .hero {
+    position: relative;
+    padding: 3.5rem 0 2.5rem;
+    overflow: hidden;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--coral);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+    border: 2px solid var(--ink);
+    margin-bottom: 1.25rem;
+    animation: bounceIn 0.6s ease both;
+  }
+  @keyframes bounceIn {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 span {
+    position: relative;
+    display: inline-block;
+    color: var(--purple);
+  }
+  .hero h1 span::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0;
+    width: 100%; height: 6px;
+    background: var(--lime);
+    border-radius: 3px;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: underlineReveal 0.7s ease 0.5s forwards;
+  }
+  @keyframes underlineReveal {
+    to { transform: scaleX(1); }
+  }
+  .hero p.lead {
+    font-size: 1.15rem;
+    color: rgba(13,13,13,0.7);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+    background: var(--ink);
+    color: var(--lime);
+    border: 2px solid var(--ink);
+    padding: 0.85rem 2.2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.02em;
+    box-shadow: 5px 6px 0 var(--purple);
+  }
+  .hero-cta:hover {
+    background: var(--lime);
+    color: var(--ink);
+    transform: translateY(-3px);
+    box-shadow: 7px 9px 0 var(--purple);
+    text-decoration: none;
+  }
+  .hero-cta .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+  }
+  .hero-cta:hover .arrow { transform: translateX(4px); }
 
-    <p class="lead">Make your own Learning Log, and keep a list of 
-        topics you're learning about. Whenever you learn something new
-        about a topic, make an entry summarizing what you've learned.
-    </p>
+  .hero-floats {
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    pointer-events: none;
+  }
+  .float-chip {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    border: 2px solid var(--ink);
+    animation: floatChip 3s ease-in-out infinite alternate;
+  }
+  .float-chip:nth-child(1) { background: var(--sky); animation-delay: 0s; }
+  .float-chip:nth-child(2) { background: var(--lime); animation-delay: 0.8s; }
+  .float-chip:nth-child(3) { background: var(--coral); color: #fff; animation-delay: 1.6s; }
+  @keyframes floatChip {
+    from { transform: translateY(0) rotate(-2deg); }
+    to   { transform: translateY(-10px) rotate(2deg); }
+  }
 
-    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
-        role="button">Register &raquo;</a>
+  .stats-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    padding: 1rem 1.4rem;
+    box-shadow: 4px 5px 0 var(--ink);
+    min-width: 120px;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+  }
+  .stat-box:nth-child(1) { animation-delay: 0.3s; }
+  .stat-box:nth-child(2) { animation-delay: 0.45s; }
+  .stat-box:nth-child(3) { animation-delay: 0.6s; }
+  .stat-box .stat-number {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .stat-box .stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(13,13,13,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 640px) {
+    .hero-floats { display: none; }
+  }
+</style>
+
+<div class="hero">
+  <div class="hero-floats" aria-hidden="true">
+    <span class="float-chip">📚 Learn</span>
+    <span class="float-chip">✍️ Write</span>
+    <span class="float-chip">🚀 Grow</span>
   </div>
 
+  <div class="hero-badge">✦ Your personal knowledge hub</div>
+
+  <h1>Track your<br><span>learning journey</span></h1>
+
+  <p class="lead">
+    Build your own Learning Log — organize topics, capture insights, and watch your knowledge grow over time.
+  </p>
+
+  <a class="hero-cta" href="{% url 'users:register' %}">
+    Get started free <span class="arrow">→</span>
+  </a>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">Topics</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color:var(--purple)">📝</div>
+      <div class="stat-label">Entries</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color:var(--coral)">100%</div>
+      <div class="stat-label">Yours</div>
+    </div>
+  </div>
+</div>
 {% endblock page_header %}

@@ -1,15 +1,107 @@
 {% extends 'learning_logs/base.html' %}
 
-{% block content%}
+{% block page_header %}
+<style>
+  .form-page-header { padding: 1.5rem 0 0.5rem; }
+  .entry-breadcrumb {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(13,13,13,0.45);
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .entry-breadcrumb a { color: rgba(13,13,13,0.45); text-decoration: none; transition: color 0.15s; }
+  .entry-breadcrumb a:hover { color: var(--purple); }
+  .form-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin: 0;
+  }
+</style>
+<div class="form-page-header fade-in">
+  <div class="entry-breadcrumb">
+    <a href="{% url 'learning_logs:topics' %}">Topics</a>
+    <span>›</span>
+    <a href="{% url 'learning_logs:topic' topic.id %}">{{ topic }}</a>
+    <span>›</span>
+    Edit entry
+  </div>
+  <h2 class="form-title">✏️ Edit entry</h2>
+</div>
+{% endblock page_header %}
 
-  <p><a href="{% url 'learning_logs:topic' topic.id %}">{{ topic }}</a></p>
+{% block content %}
+<style>
+  .form-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 7px 8px 0 var(--ink);
+    max-width: 640px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+  .topic-ref-chip {
+    display: inline-block;
+    background: var(--sky);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    border: 2px solid var(--ink);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+  }
+  .topic-ref-chip:hover {
+    background: var(--ink);
+    color: var(--sky);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .save-changes-btn {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    background: var(--purple);
+    color: #fff;
+    border: 2px solid var(--ink);
+    padding: 0.65rem 1.8rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+  .save-changes-btn:hover {
+    background: var(--ink);
+    color: var(--lime);
+    transform: translateY(-2px);
+    box-shadow: 5px 6px 0 var(--purple);
+  }
+  textarea { min-height: 200px; resize: vertical; }
+  @media (max-width: 540px) { .form-card { padding: 1.5rem; } }
+</style>
 
-  <p>Edit entry:</p>
+<a href="{% url 'learning_logs:topic' topic.id %}" class="topic-ref-chip fade-in">
+  ← Back to {{ topic }}
+</a>
 
-  <form action="{% url 'learning_logs:edit_entry' entry.id%}" method="post">
-    {%csrf_token %}
+<div class="form-card">
+  <form action="{% url 'learning_logs:edit_entry' entry.id %}" method="post">
+    {% csrf_token %}
     {{ form.as_p }}
-    <button name="submit">Save changes</button>
+    <button name="submit" class="save-changes-btn">Save changes ✦</button>
   </form>
-
-  {% endblock content%}
+</div>
+{% endblock content %}

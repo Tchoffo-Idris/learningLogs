@@ -1,29 +1,202 @@
 {% extends 'learning_logs/base.html' %}
 
-
 {% block page_header %}
-  <h3> {{ topic }} </h3>
+<style>
+  .topic-page-header {
+    padding: 1.2rem 0 0.5rem;
+  }
+  .topic-breadcrumb {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(13,13,13,0.45);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .topic-breadcrumb a {
+    color: rgba(13,13,13,0.45);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .topic-breadcrumb a:hover { color: var(--purple); }
+  .topic-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .topic-name span {
+    display: inline-block;
+    background: var(--lime);
+    padding: 0 8px;
+    border-radius: 6px;
+    position: relative;
+  }
+</style>
+
+<div class="topic-page-header">
+  <div class="topic-breadcrumb">
+    <a href="{% url 'learning_logs:topics' %}">Topics</a>
+    <span>›</span>
+    <span>Entry</span>
+  </div>
+  <h1 class="topic-name"><span>{{ topic }}</span></h1>
+</div>
 {% endblock page_header %}
 
 {% block content %}
-  <p>
-    <a href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
-  </p>
+<style>
+  .entries-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .entry-count {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: rgba(13,13,13,0.55);
+  }
+  .add-entry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--lime);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+  .add-entry-btn:hover {
+    background: var(--ink);
+    color: var(--lime);
+    transform: translateY(-2px);
+    box-shadow: 5px 7px 0 var(--purple);
+    text-decoration: none;
+  }
 
-  {% for entry in entries %}
-   <div class="card mb-3">
-    <h4 class="card-header">
-      {{ entry.date_added|date:'M d, Y H:i' }}
-      <small><a href="{% url 'learning_logs:edit_entry' entry.id %}">
-        Edit entry</a></small>
-    </h4>
-     <div class="card-body">
-      {{ entry.text|linebreaks }}
-     </div>
-   </div>
-   
-  {% empty %}
-    <p>There are no entries for this topic yet.</p>
-  {% endfor %}
-  
+  .entry-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    margin-bottom: 1.2rem;
+    box-shadow: 5px 6px 0 var(--ink);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .entry-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 10px 0 var(--ink);
+  }
+  .entry-card-header {
+    background: var(--ink);
+    color: var(--lime);
+    padding: 0.85rem 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .entry-date {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .entry-date::before {
+    content: '📅';
+    font-size: 0.9rem;
+  }
+  .edit-entry-btn {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.78rem;
+    background: rgba(255,255,255,0.12);
+    color: var(--lime);
+    padding: 0.28rem 0.85rem;
+    border-radius: 50px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: background 0.2s, color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .edit-entry-btn::before { content: '✏️'; font-size: 0.8rem; }
+  .edit-entry-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    text-decoration: none;
+  }
+  .entry-body {
+    padding: 1.3rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: rgba(13,13,13,0.82);
+  }
+
+  .no-entries {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    color: rgba(13,13,13,0.45);
+    margin-bottom: 1.5rem;
+  }
+  .no-entries .empty-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
+  .no-entries p { font-family: var(--font-display); font-weight: 600; font-size: 1rem; margin: 0; }
+
+  /* Stagger entries */
+  .entry-card:nth-child(1) { animation-delay: 0.05s; }
+  .entry-card:nth-child(2) { animation-delay: 0.12s; }
+  .entry-card:nth-child(3) { animation-delay: 0.19s; }
+  .entry-card:nth-child(4) { animation-delay: 0.26s; }
+  .entry-card:nth-child(5) { animation-delay: 0.33s; }
+  .entry-card:nth-child(n+6) { animation-delay: 0.4s; }
+</style>
+
+<div class="entries-toolbar fade-in">
+  <span class="entry-count">
+    {% if entries %}{{ entries|length }} entr{{ entries|length|pluralize:"y,ies" }}{% else %}No entries yet{% endif %}
+  </span>
+  <a href="{% url 'learning_logs:new_entry' topic.id %}" class="add-entry-btn">
+    <span>＋</span> Add entry
+  </a>
+</div>
+
+{% for entry in entries %}
+  <div class="entry-card">
+    <div class="entry-card-header">
+      <span class="entry-date">{{ entry.date_added|date:'M d, Y · H:i' }}</span>
+      <a class="edit-entry-btn" href="{% url 'learning_logs:edit_entry' entry.id %}">Edit entry</a>
+    </div>
+    <div class="entry-body">{{ entry.text|linebreaks }}</div>
+  </div>
+{% empty %}
+  <div class="no-entries fade-in">
+    <span class="empty-icon">✍️</span>
+    <p>No entries for this topic yet.<br>Add your first one!</p>
+  </div>
+{% endfor %}
+
 {% endblock content %}

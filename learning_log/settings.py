@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "temp-secret-key  for-dev-only")
 
 from pathlib import Path
 
@@ -128,3 +128,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # My settings
 LOGIN_URL = "users:login"
+
+# settings.py
+LOGOUT_REDIRECT_ALLOWED_METHODS = ("POST", "GET")  # Use with caution!

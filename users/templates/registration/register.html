@@ -1,13 +1,125 @@
 {% extends 'learning_logs/base.html' %}
 
+{% block page_header %}
+<style>
+  .auth-header {
+    padding: 1.5rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .auth-icon {
+    width: 56px; height: 56px;
+    background: var(--lime);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+  .auth-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0;
+  }
+  .auth-subtitle { font-size: 0.9rem; color: rgba(13,13,13,0.5); margin: 0; font-weight: 400; }
+</style>
+<div class="auth-header fade-in">
+  <div class="auth-icon">🌱</div>
+  <div>
+    <h2 class="auth-title">Create an account</h2>
+    <p class="auth-subtitle">Start your learning journey today</p>
+  </div>
+</div>
+{% endblock page_header %}
+
 {% block content %}
+<style>
+  .auth-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 7px 8px 0 var(--ink);
+    max-width: 480px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+  .auth-card p { margin-bottom: 1rem; }
+  .register-btn {
+    width: 100%;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+    background: var(--lime);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.85rem;
+    border-radius: 50px;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    display: block;
+    text-align: center;
+  }
+  .register-btn:hover {
+    background: var(--ink);
+    color: var(--lime);
+    transform: translateY(-2px);
+    box-shadow: 5px 6px 0 var(--purple);
+  }
+  .form-helper {
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.9rem;
+    color: rgba(13,13,13,0.6);
+    text-align: center;
+  }
+  .form-helper a { font-family: var(--font-display); font-weight: 700; color: var(--purple); }
+  .form-helper a:hover { color: var(--coral); }
+  .perks-row {
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .perk-chip {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    border: 2px solid var(--ink);
+    background: var(--sky);
+    color: var(--ink);
+  }
+  @media (max-width: 540px) { .auth-card { padding: 1.5rem; } }
+</style>
+
+<div class="auth-card">
+  <div class="perks-row">
+    <span class="perk-chip">✦ Free forever</span>
+    <span class="perk-chip">🔒 Private</span>
+    <span class="perk-chip">📚 Unlimited topics</span>
+  </div>
 
   <form method='post' action="{% url 'users:register' %}">
     {% csrf_token %}
-    {{ form.as_p}}
-
-    <button name="submit">Register</button>
+    {{ form.as_p }}
+    <button name="submit" class="register-btn">Create my account →</button>
     <input type="hidden" name="next" value="{% url 'learning_logs:index' %}"/>
   </form>
-  
+
+  <div class="form-helper">
+    Already have an account?
+    <a href="{% url 'users:login' %}">Log in</a>
+  </div>
+</div>
+
 {% endblock content %}

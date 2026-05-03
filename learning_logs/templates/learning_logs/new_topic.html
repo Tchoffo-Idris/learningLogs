@@ -1,13 +1,59 @@
 {% extends 'learning_logs/base.html' %}
 
-{% block content%}
+{% block page_header %}
+<style>
+  .form-page-header {
+    padding: 1.5rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .form-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 4px 0 var(--ink);
+    background: var(--sky);
+  }
+  .form-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin: 0;
+  }
+</style>
+<div class="form-page-header fade-in">
+  <div class="form-icon">🗂️</div>
+  <div>
+    <h2 class="form-title">Add a new topic</h2>
+  </div>
+</div>
+{% endblock page_header %}
 
-  <p>Add a new topic: </p>
+{% block content %}
+<style>
+  .form-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 7px 8px 0 var(--ink);
+    max-width: 540px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+  @media (max-width: 540px) { .form-card { padding: 1.5rem; } }
+</style>
 
+<div class="form-card">
   <form action="{% url 'learning_logs:new_topic' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button name="submit">Add topics</button>
+    <button name="submit">Add topic ✦</button>
   </form>
-
+</div>
 {% endblock content %}

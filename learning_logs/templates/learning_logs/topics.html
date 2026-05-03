@@ -1,21 +1,180 @@
 {% extends "learning_logs/base.html" %}
 
 {% block page_header %}
-  <h1>Topics</h1>
+<style>
+  .topics-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.5rem 0 0.5rem;
+  }
+  .topics-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--ink);
+    position: relative;
+    display: inline-block;
+  }
+  .topics-title::before {
+    content: '✦';
+    color: var(--coral);
+    font-size: 0.6em;
+    vertical-align: super;
+    margin-right: 0.25em;
+    animation: spin 4s linear infinite;
+  }
+  .topics-count-badge {
+    background: var(--purple);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    border: 2px solid var(--ink);
+  }
+</style>
+
+<div class="topics-header">
+  <h1 class="topics-title">Topics</h1>
+  <span class="topics-count-badge">📚 My Collection</span>
+</div>
 {% endblock page_header %}
+
 {% block content %}
+<style>
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  .topic-card {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 5px 6px 0 var(--ink);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 5px;
+    background: var(--lime);
+    transition: height 0.2s;
+  }
+  .topic-card:nth-child(3n+2)::before { background: var(--sky); }
+  .topic-card:nth-child(3n+3)::before { background: var(--coral); }
+  .topic-card:hover {
+    transform: translateY(-5px) rotate(-0.5deg);
+    box-shadow: 8px 10px 0 var(--ink);
+    text-decoration: none;
+  }
+  .topic-card-emoji {
+    font-size: 1.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .topic-card-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .topic-card-arrow {
+    position: absolute;
+    bottom: 1.2rem; right: 1.3rem;
+    font-size: 1.1rem;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s, transform 0.2s;
+    color: var(--purple);
+  }
+  .topic-card:hover .topic-card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: rgba(13,13,13,0.5);
+  }
+  .empty-state .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+    animation: floatChip 2s ease-in-out infinite alternate;
+  }
+  .empty-state p {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0;
+  }
 
-  <p>Topics</p>
+  .add-topic-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    background: var(--lime);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.75rem 1.8rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 4px 5px 0 var(--ink);
+    margin-top: 0.5rem;
+  }
+  .add-topic-btn:hover {
+    background: var(--ink);
+    color: var(--lime);
+    transform: translateY(-2px);
+    box-shadow: 6px 8px 0 var(--purple);
+    text-decoration: none;
+  }
 
-  <ul>
-    {% for topic in topics %}
-      <li><h3>
-        <a href="{% url 'learning_logs:topic' topic.id %}">{{ topic }}</a>
-      </h3></li>
-    {% empty %}
-      <li><h3>No topics have been added yet.</h3></li>
-    {% endfor %}
-  </ul>
+  /* Stagger topic cards */
+  .topic-card { animation: fadeUp 0.4s ease both; }
+</style>
 
-  <h3><a href="{% url 'learning_logs:new_topic' %}">Add a new topic</a></h3>
+{% if topics %}
+<div class="topics-grid">
+  {% for topic in topics %}
+  <a href="{% url 'learning_logs:topic' topic.id %}" class="topic-card">
+    <span class="topic-card-emoji">
+      {% cycle '📘' '🧪' '🎨' '🧠' '🌍' '💡' '🔬' '🎵' '📐' '🚀' %}
+    </span>
+    <div class="topic-card-name">{{ topic }}</div>
+    <span class="topic-card-arrow">→</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state fade-in">
+  <span class="empty-icon">📭</span>
+  <p>No topics yet — be the first to add one!</p>
+</div>
+{% endif %}
+
+<a href="{% url 'learning_logs:new_topic' %}" class="add-topic-btn fade-in fade-in-3">
+  <span>＋</span> Add new topic
+</a>
 {% endblock content %}

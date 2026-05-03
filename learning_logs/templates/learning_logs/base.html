@@ -3,67 +3,417 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <link
-  href="https://cdn.jsdelivr.net/npm/bootstra@5"
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1,
-    shrink-to-fit=no">
-  <title>Learning Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Learning Log ✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
-  {% bootstrap_css %}
-  {% bootstrap_javascript jquery='full' %}
+  <style>
+    :root {
+      --lime: #C8F135;
+      --coral: #FF5C3A;
+      --ink: #0D0D0D;
+      --cream: #F5F0E8;
+      --sky: #A8DAFF;
+      --purple: #7B5CF5;
+      --card-bg: #FFFFFF;
+      --border: rgba(13,13,13,0.12);
+      --shadow: 0 4px 24px rgba(13,13,13,0.10);
+      --radius: 16px;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* Animated background blobs */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,241,53,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: blobFloat 8s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -15%;
+      left: -8%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(168,218,255,0.30) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: blobFloat 10s ease-in-out infinite alternate-reverse;
+      z-index: 0;
+    }
+    @keyframes blobFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, 20px) scale(1.07); }
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(245,240,232,0.85) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 2px solid var(--ink) !important;
+      padding: 0.75rem 2rem;
+      font-family: var(--font-display);
+    }
+    .navbar-brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--ink) !important;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .navbar-brand:hover { transform: scale(1.04); }
+    .navbar-brand::before {
+      content: '✦';
+      font-size: 1.1rem;
+      color: var(--coral);
+      display: inline-block;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .nav-link {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--ink) !important;
+      padding: 0.4rem 1rem !important;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .nav-link:hover {
+      background: var(--ink);
+      color: var(--lime) !important;
+    }
+
+    .navbar-text {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: var(--lime);
+      color: var(--ink);
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      border: 2px solid var(--ink);
+    }
+
+    .nav-pill-btn {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--ink);
+      background: var(--lime);
+      border: 2px solid var(--ink);
+      padding: 0.35rem 1.1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      display: inline-block;
+      letter-spacing: 0.02em;
+    }
+    .nav-pill-btn:hover {
+      background: var(--coral);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 3px 4px 0px var(--ink);
+      text-decoration: none;
+    }
+
+    /* ── MAIN CONTAINER ── */
+    main.container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header-block {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    /* ── CARDS ── */
+    .card {
+      border: 2px solid var(--ink) !important;
+      border-radius: var(--radius) !important;
+      box-shadow: 5px 6px 0px var(--ink);
+      background: var(--card-bg) !important;
+      transition: transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 8px 10px 0px var(--ink);
+    }
+    .card-header {
+      background: var(--ink) !important;
+      color: var(--lime) !important;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none !important;
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .card-header a {
+      color: var(--lime);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(255,255,255,0.12);
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      transition: background 0.2s;
+    }
+    .card-header a:hover { background: rgba(255,255,255,0.25); }
+    .card-body { padding: 1.3rem; font-size: 1rem; line-height: 1.7; }
+
+    /* ── BUTTONS ── */
+    button[name="submit"], .btn-submit {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      background: var(--lime);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 0.65rem 1.8rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.02em;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    button[name="submit"]:hover {
+      background: var(--coral);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 4px 5px 0px var(--ink);
+    }
+    button[name="submit"]:active { transform: translateY(0); box-shadow: 2px 2px 0 var(--ink); }
+
+    .btn-primary {
+      font-family: var(--font-display) !important;
+      font-weight: 700 !important;
+      background: var(--lime) !important;
+      color: var(--ink) !important;
+      border: 2px solid var(--ink) !important;
+      border-radius: 50px !important;
+      padding: 0.65rem 1.8rem !important;
+      transition: all 0.2s !important;
+      letter-spacing: 0.02em !important;
+    }
+    .btn-primary:hover {
+      background: var(--coral) !important;
+      color: #fff !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 4px 5px 0 var(--ink) !important;
+    }
+
+    /* ── FORMS ── */
+    input[type="text"], input[type="password"], input[type="email"],
+    textarea, select, .form-control {
+      font-family: var(--font-body) !important;
+      border: 2px solid var(--ink) !important;
+      border-radius: 10px !important;
+      padding: 0.65rem 1rem !important;
+      font-size: 0.97rem !important;
+      background: #fff !important;
+      color: var(--ink) !important;
+      box-shadow: 3px 3px 0 rgba(13,13,13,0.08) !important;
+      transition: box-shadow 0.2s, border-color 0.2s !important;
+      width: 100%;
+    }
+    input:focus, textarea:focus, select:focus, .form-control:focus {
+      outline: none !important;
+      border-color: var(--purple) !important;
+      box-shadow: 3px 3px 0 var(--purple) !important;
+    }
+    label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    /* ── LINKS ── */
+    a {
+      color: var(--purple);
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    a:hover { color: var(--coral); }
+
+    /* ── LISTS ── */
+    ul { list-style: none; padding: 0; }
+    ul li {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    ul li:last-child { border-bottom: none; }
+
+    /* ── PAGE ENTRY ANIMATION ── */
+    .fade-in {
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-1 { animation-delay: 0.05s; }
+    .fade-in-2 { animation-delay: 0.12s; }
+    .fade-in-3 { animation-delay: 0.20s; }
+    .fade-in-4 { animation-delay: 0.28s; }
+
+    /* ── NAVBAR TOGGLER ── */
+    .navbar-toggler {
+      border: 2px solid var(--ink) !important;
+      border-radius: 8px !important;
+    }
+    .navbar-toggler:focus { box-shadow: none !important; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 4px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .navbar { padding: 0.6rem 1rem; }
+      main.container { padding: 1.5rem 1rem 3rem; }
+    }
+  </style>
 </head>
 <body>
 
- <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
-
-    <a class="navbar-brand" href="{% url 'learning_logs:index'  %}">
-      Learning Log
-    </a>
+  <nav class="navbar navbar-expand-md">
+    <a class="navbar-brand" href="{% url 'learning_logs:index' %}">Learning Log</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse"
       data-target="#navbarCollapse" aria-controls="navbarCollapse"
       aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span></button>
-  <div class="collapse navbar-collapse" id="navbarCollapse">
-    <ul class="navbar-nav mr auto">
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'learning_logs:topics' %}">
-          Topics
-        </a>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto">
-      {%if user.is_authenticated %}
-      <li class="nav-item">
-        <span class="navbar-text"}">Hello, {{ user.username}}.</span>
-      </li>
-      <li class="nav-item">
-        <a class="navbar-link" href="{% url 'users:logout' %}">Log out</a>
-      </li>
-      {% else %}
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+     <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="navbar-link" href="{% url 'users:register' %}">Register</a>
+          <a class="nav-link" href="{% url 'learning_logs:topics' %}">Topics</a>
         </li>
-        <li class="nav-item">
-          <a class="navbar-link" href="{% url 'users:login' %}">Log in</a>
-        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto" style="align-items:center; gap:0.5rem;">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <span class="navbar-text">👋 {{ user.username }}</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-pill-btn" href="{% url 'users:logout' %}">Log out</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-pill-btn" href="{% url 'users:login' %}">Log in</a>
+          </li>
         {% endif %}
-    </ul>
-  </div>
+      </ul>
+    </div>
+  </nav>
 
- </nav>
+  <main role="main" class="container">
+    <div class="page-header-block fade-in">
+      {% block page_header %}{% endblock page_header %}
+    </div>
+    <div class="fade-in fade-in-1">
+      {% block content %}{% endblock content %}
+    </div>
+  </main>
 
- <main role="main" class="container">
-  <div class="pb-2 mb-2 border-bottom">
-    {% block page_header %}{% endblock page_header %}
-  </div>
-  <div>
-    {% block content %}{% endblock content %}
-  </div>
- </main>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Stagger card animations on load
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(24px)';
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s, translateY 0.2s';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 + i * 80);
+      });
 
+      // Button ripple effect
+      document.querySelectorAll('button[name="submit"], .btn-primary').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          const ripple = document.createElement('span');
+          ripple.style.cssText = `
+            position:absolute; border-radius:50%;
+            background:rgba(255,255,255,0.5); transform:scale(0);
+            animation:rippleAnim 0.5s linear; pointer-events:none;
+            width:80px; height:80px;
+            left:${e.offsetX - 40}px; top:${e.offsetY - 40}px;
+          `;
+          this.style.position = 'relative';
+          this.style.overflow = 'hidden';
+          this.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+    });
+  </script>
+  <style>
+    @keyframes rippleAnim {
+      to { transform: scale(3); opacity: 0; }
+    }
+  </style>
 </body>
-
 </html>
